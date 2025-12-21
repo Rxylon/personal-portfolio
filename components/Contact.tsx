@@ -83,7 +83,7 @@ export default function Contact() {
             className="mt-12"
           >
             <a
-              href="/Resume_6.pdf"
+              href="/Resume.pdf"
               target="_blank"
               className="inline-flex items-center gap-2 text-linear-muted hover:text-linear-text transition-colors"
             >
