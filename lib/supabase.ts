@@ -1,9 +1,17 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { error } from "three/src/Three.WebGPU.js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Only create client if env vars are available
+let supabase: SupabaseClient | null = null;
+
+if (supabaseUrl && supabaseAnonKey) {
+  supabase = createClient(supabaseUrl, supabaseAnonKey);
+}
+
+export { supabase };
 
 export interface Project {
   id: number;
@@ -21,6 +29,10 @@ export interface Project {
 }
 
 export async function getProjects(): Promise<Project[]> {
+  if (!supabase) {
+    return [];
+  }
+  
   const { data, error } = await supabase
     .from("projects")
     .select("*")
@@ -35,6 +47,10 @@ export async function getProjects(): Promise<Project[]> {
 }
 
 export async function getFeaturedProjects(): Promise<Project[]> {
+  if (!supabase) {
+    return [];
+  }
+
   const { data, error } = await supabase
     .from("projects")
     .select("*")
@@ -51,6 +67,10 @@ export async function getFeaturedProjects(): Promise<Project[]> {
 }
 
 export async function getProjectById(id: number): Promise<Project | null> {
+  if (!supabase) {
+    return null;
+  }
+
   const { data, error } = await supabase
     .from("projects")
     .select("*")
