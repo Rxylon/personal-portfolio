@@ -1,16 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const navLinks = [
-  { name: "Home", href: "#home" },
-  { name: "Projects", href: "#projects" },
-  { name: "About", href: "#about" },
-  { name: "Contact", href: "#contact" },
+  { name: "Home", href: "/" },
+  { name: "Projects", href: "/projects" },
+  { name: "About", href: "/#about" },
+  { name: "Contact", href: "/#contact" },
 ];
 
 export default function Navigation() {
+  const pathname = usePathname();
   const [activeSection, setActiveSection] = useState("home");
   const [scrolled, setScrolled] = useState(false);
 
@@ -18,15 +21,17 @@ export default function Navigation() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
 
-      // Update active section based on scroll position
-      const sections = navLinks.map((link) => link.href.replace("#", ""));
-      for (const section of sections.reverse()) {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= 150) {
-            setActiveSection(section);
-            break;
+      // Only track scroll sections on home page
+      if (pathname === "/") {
+        const sections = ["home", "about", "contact"];
+        for (const section of sections.reverse()) {
+          const element = document.getElementById(section);
+          if (element) {
+            const rect = element.getBoundingClientRect();
+            if (rect.top <= 150) {
+              setActiveSection(section);
+              break;
+            }
           }
         }
       }
@@ -34,7 +39,17 @@ export default function Navigation() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [pathname]);
+
+  const isActive = (href: string) => {
+    if (href === "/projects") return pathname === "/projects";
+    if (href === "/") return pathname === "/" && activeSection === "home";
+    if (href.startsWith("/#")) {
+      const section = href.replace("/#", "");
+      return pathname === "/" && activeSection === section;
+    }
+    return false;
+  };
 
   return (
     <motion.nav
@@ -49,23 +64,23 @@ export default function Navigation() {
         <ul className="flex items-center gap-1">
           {navLinks.map((link) => (
             <li key={link.name}>
-              <a
+              <Link
                 href={link.href}
                 className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 block ${
-                  activeSection === link.href.replace("#", "")
+                  isActive(link.href)
                     ? "text-linear-text bg-white/5"
                     : "text-linear-muted hover:text-linear-text"
                 }`}
               >
                 {link.name}
-                {activeSection === link.href.replace("#", "") && (
+                {isActive(link.href) && (
                   <motion.span
                     layoutId="activeIndicator"
                     className="absolute inset-0 bg-white/5 rounded-full -z-10"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

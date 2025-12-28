@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { ExternalLink, Github, ArrowUpRight } from "lucide-react";
+import { ExternalLink, Github, ArrowUpRight, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface Project {
   id: number;
@@ -57,6 +58,9 @@ const projects: Project[] = [
     image: "/project-5.jpg"
   }
 ];
+
+// Featured projects to show on home page (first 3)
+const featuredProjects = projects.slice(0, 3);
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   const ref = useRef(null);
@@ -174,12 +178,28 @@ export default function Projects() {
           </p>
         </motion.div>
 
-        {/* Projects list */}
+        {/* Projects list - only show featured */}
         <div className="divide-y divide-white/[0.08]">
-          {projects.map((project, index) => (
+          {featuredProjects.map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} />
           ))}
         </div>
+
+        {/* View All Projects Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.5, duration: 0.6 }}
+          className="text-center mt-16"
+        >
+          <Link
+            href="/projects"
+            className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-white/20 text-linear-text font-medium transition-all duration-300 hover:border-linear-accent hover:shadow-[0_0_30px_rgba(94,106,210,0.3)]"
+          >
+            <span>View All Projects</span>
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </motion.div>
       </div>
     </section>
   );
