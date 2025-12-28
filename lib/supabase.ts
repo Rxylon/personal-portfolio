@@ -6,8 +6,14 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 // Only create client if env vars are available
 let supabase: SupabaseClient | null = null;
 
+console.log("Supabase URL exists:", !!supabaseUrl);
+console.log("Supabase Key exists:", !!supabaseKey);
+
 if (supabaseUrl && supabaseKey) {
   supabase = createClient(supabaseUrl, supabaseKey);
+  console.log("Supabase client created successfully");
+} else {
+  console.log("Supabase client NOT created - missing env vars");
 }
 
 export { supabase };

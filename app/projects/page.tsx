@@ -70,9 +70,8 @@ export default async function ProjectsPage() {
   
   try {
     // Try to fetch from Supabase
-    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      projects = await getProjects();
-    }
+    projects = await getProjects();
+    console.log("Fetched projects from Supabase:", projects.length);
   } catch (error) {
     console.error("Failed to fetch from Supabase:", error);
   }
